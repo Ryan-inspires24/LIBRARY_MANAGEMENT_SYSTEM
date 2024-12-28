@@ -1,0 +1,35 @@
+{
+    "1": {
+   "Title" : "The Colour of Magic",
+    "Genre" : "Comedy",
+    "Author" : "Terry Practchette",
+    "id": "1",
+    "publisher" : "",
+    "Year":"1983",
+    "number_of_copies" : 10,
+    "available_copies" : 10
+},
+
+"2": { 
+    "Title" : "The 48 Laws of Power",
+    "Genre" : "Leadership",
+    "Author" : "Robert Greene",
+    "id": "2",
+    "Year":"1998",
+    "publisher" : "Penguin",
+    "number_of_copies" : 10,
+    "available_copies" : 10
+
+},
+
+"3": {
+    "Title" : "Romeo and Juliette",
+    "Genre" : "Drama",
+    "Author" : "William Shakespear",
+    "id" : "3",
+    "publisher" : "Penguin",
+    "Year" : "1597",
+    "number_of_copies" : 10,
+    "available_copies" : 10
+}
+}
