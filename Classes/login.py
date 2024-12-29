@@ -33,7 +33,7 @@ class Login:
     def check_credentials(self):
         
         if self.librarianCode == self.entry2.get():
-            messagebox.showinfo('Welcome', 'Welcome Back!')
+            messagebox.showinfo('Welcome', f'Welcome Back!')
             self.login_status = True
         else:
             messagebox.showerror('Error', 'Wrong code!')

@@ -6,6 +6,9 @@ class Member:
         self.memberName = memberName
         self.bookFine = 0
         
+    def registerMember():
+        pass
+        
     def accessMembers():
         #diplay member names, class, and ids
         pass
