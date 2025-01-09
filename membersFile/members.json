@@ -1,0 +1,25 @@
+{
+    "1":{
+        "memberId":"001",
+        "memberName" : "Banyeh Akika",
+        "memberClass" : "USA",
+        "dateOfEntry" : "01/02/2024",
+        "fine" : 0
+    },
+    "2":{
+        "memberId":"002",
+        "memberName" : "Fotsing Fonou",
+        "memberClass" : "USS",
+        "dateOfEntry" : "24/04/2024",
+        "fine" : 0
+
+    },
+    "3":{
+        "memberId":"003",
+        "memberName" : "Ryan Beclin",
+        "memberClass" : "USS",
+        "dateOfEntry" : "01/11/2024",
+        "fine" : 0
+
+    }
+}
