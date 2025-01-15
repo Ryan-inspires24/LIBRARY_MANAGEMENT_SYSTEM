@@ -1,30 +1,48 @@
 from tkinter import *
 from tkinter import ttk
-from Classes.login import Login
-from Classes.book import Book
 from Classes.member import Member
+from tkinter import messagebox
 
 class LibraryGui:
     def __init__(self, root, library, members):
         self.root = root
         self.library = library
         self.members = members
+        self.centerWindow()
 
         self.root.title("Library Management System")
         
         self.dashboard = Frame(root)
-        self.dashboard.pack(fill=BOTH, expand=1)
+        self.dashboard.pack(fill=BOTH, expand=5)
+        
+        self.title = Label(self.dashboard, text='Choose your view', border=20, font=15)
+        self.title.pack(side=TOP)
         
         handleBooksBtn = Button(self.dashboard, text="Handle Books", command=self.handleBooks)
         handleMembersBtn = Button(self.dashboard, text="Handle Members", command=self.handleMembers)
 
         handleBooksBtn.pack(padx=20, pady=20)
         handleMembersBtn.pack(padx=20, pady=20)
+        
+    def centerWindow(self):
+        
+            screenWidth = self.root.winfo_screenwidth() 
+            screenHeight = self.root.winfo_screenheight()
+
+            windowWidth = 400 
+            windowHeight = 400
+            positionx = int((screenWidth - windowWidth) / 2) 
+            positiony = int((screenHeight - windowHeight) / 2) 
+        
+            self.root.geometry(f'{windowWidth}x{windowHeight}+{positionx}+{positiony}')
+        
 
     def handleBooks(self):
+        
         self.clearFrame()
+        self.root.minsize=(1000,700)
         self.bookFrame = Frame(self.root)
-        self.bookFrame.pack(fill=BOTH, expand=1)
+        self.bookFrame.pack(fill=BOTH, expand=5)
 
         self.bookTree = ttk.Treeview(self.bookFrame, columns=("bookId", "title", "author", "genre", "year", "copies"), show='headings')
         self.bookTree.heading("bookId", text="Book ID")
@@ -33,14 +51,14 @@ class LibraryGui:
         self.bookTree.heading("genre", text="Genre")
         self.bookTree.heading("year", text="Year")
         self.bookTree.heading("copies", text="Copies")
-        self.bookTree.pack(fill=BOTH, expand=1)
+        self.bookTree.pack(fill=BOTH, expand=5)
 
         for bookId, bookInfo in self.library.items():
             self.bookTree.insert("", END, values=(bookId, bookInfo['Title'], bookInfo['Author'], bookInfo['Genre'], bookInfo['Year'], bookInfo['availableCopies']))
 
         addBookBtn = Button(self.bookFrame, text="Add Book", command=self.addBook)
         addBookBtn.pack(side=LEFT, padx=10, pady=10)
-        handleMembersBtn = Button(self.bookFrame, text= 'Go to Handle Members', command=self.handleMembers())
+        handleMembersBtn = Button(self.bookFrame, text='Go to Handle Members', command=self.handleMembers)
         handleMembersBtn.pack(side=LEFT, padx=10, pady=10)
 
     def handleMembers(self):
@@ -59,12 +77,11 @@ class LibraryGui:
         for memberId, memberInfo in self.members.items():
             self.memberTree.insert("", END, values=(memberId, memberInfo['memberName'], memberInfo['dateOfEntry'], memberInfo['memberClass'], memberInfo['fine']))
 
-        self.memberTree.bind('<Double-1>', self.onMemberSelect())
+        self.memberTree.bind('<Double-1>', self.onMemberSelect)
 
-        
-        addMemberBtn = Button(self.memberFrame, text="Add Member", command=self.addMember())
+        addMemberBtn = Button(self.memberFrame, text="Add Member", command=self.addMember)
         addMemberBtn.pack(side=LEFT, padx=10, pady=10)
-        handlebooksBtn = Button(self.memberFrame, text='Go to Books Page', command=self.handleBooks())
+        handlebooksBtn = Button(self.memberFrame, text='Go to Books Page', command=self.handleBooks)
         handlebooksBtn.pack(side=RIGHT, padx=10, pady=10)
         
     def clearFrame(self):
@@ -129,15 +146,65 @@ class LibraryGui:
         returnBookBtn = Button(self.memberWindow, text="Return Book", command=lambda: self.returnBook(memberId))
         payFineBtn = Button(self.memberWindow, text="Pay Fine", command=lambda: self.payFine(memberId))
 
-        borrowBookBtn.pack(pady=10)
-        returnBookBtn.pack(pady=10)
-        payFineBtn.pack(pady=10)
+        borrowBookBtn.pack(pady=20, padx=20)
+        returnBookBtn.pack(pady=20, padx=20)
+        payFineBtn.pack(pady=20, padx=20)
 
     def borrowBook(self, memberId):
-       Member.borrowBook(memberId)
-
+        self.bookWindow = Toplevel(self.root)
+        self.bookWindow.title("Borrow Book")
+    
+        Label(self.bookWindow, text="Select Book ID:").pack(pady=5,padx=5) 
+        self.bookIdEntry = Entry(self.bookWindow) 
+        self.bookIdEntry.pack(pady=5, padx=5)
+    
+        borrowBtn = Button(self.bookWindow, text="Borrow", command=lambda: self.confirmBorrow(memberId))
+        borrowBtn.pack(pady=20, padx=20) 
+    
+    def confirmBorrow(self, memberId):
+        bookId = self.bookIdEntry.get()
+        if bookId in self.library: 
+            bookInfo = self.library[bookId]
+            if int(bookInfo['availableCopies']) > 0:
+                bookInfo['availableCopies'] = str(int(bookInfo['availableCopies']) - 1)
+                self.library[bookId] = bookInfo
+                # Member.borrowBook(memberId, bookId)
+                
+                
+            else:
+                print("Book ID not found")
+                messagebox.showerror('Sorry,', 'There are no more available copies of this book.') 
+                
+        else:
+            messagebox.showerror('Error!', 'This book ID does not exist in this Library.') 
+               
+        self.bookWindow.destroy() 
+                
     def returnBook(self, memberId):
-        Member.returnBook(memberId)
+        self.returnWindow = Toplevel(self.root)
+        self.returnWindow.title("Return Book") 
+        
+        Label(self.returnWindow, text="Select Book ID:").pack(pady=5, padx=5) 
+        
+        self.returnBookIdEntry = Entry(self.returnWindow) 
+        self.returnBookIdEntry.pack(pady=5, padx=5)
+        
+        returnBtn = Button(self.returnWindow, text="Return", command=lambda: self.confirmReturn(memberId)) 
+        returnBtn.pack(pady=10) 
+        
+    def confirmReturn(self, memberId):
+        bookId = self.returnBookIdEntry.get() 
+        if bookId in self.library: 
+            bookInfo = self.library[bookId] 
+            bookInfo['availableCopies'] = str(int(bookInfo['availableCopies']) + 1) 
+            self.library[bookId] = bookInfo 
+            # Member.returnBook(memberId, bookId) 
+     
+            self.updateBookTree() 
+            self.updateMemberTree() 
+        else: print("Book ID not found")
+        self.returnWindow.destroy() 
+   
 
     def payFine(self, memberId):
         Member.payfine(memberId)
@@ -167,7 +234,6 @@ class LibraryGui:
         self.bookYearEntry.pack(pady=5)
 
         Label(self.bookWindow, text="Copies:").pack(pady=5)
-        self.bookCopiesEntry = Entry(self.bookWindow)
         self.bookCopiesEntry.pack(pady=5)
 
         saveBookBtn = Button(self.bookWindow, text="Save Book", command=self.saveBook)
@@ -184,4 +250,3 @@ class LibraryGui:
         self.library[self.bookIdEntry.get()] = newBook
         self.bookTree.insert("", END, values=(self.bookIdEntry.get(), newBook['Title'], newBook['Author'], newBook['Genre'], newBook['Year'], newBook['availableCopies']))
         self.bookWindow.destroy()
-

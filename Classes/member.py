@@ -12,14 +12,14 @@ class Member:
         self.borrowLimit = 3 
         
     def borrowBook(self, book):
-        Book.checkAvailability()
-        if len(self.borrowedBooks) < self.borrowLimit:
-            dueDate = datetime.now() + timedelta(days=7)
-            #if the number of books the user has borrowed is lessthan the borrowing limit, set the duedate to 7 days after and add to the list.
-            self.borrowedBooks[book.bookId] = {
-                'book': book,
-                'dueDate': dueDate
-            }
+        if Book.checkAvailability():
+            if len(self.borrowedBooks) < self.borrowLimit:
+                dueDate = datetime.now() + timedelta(days=7)
+                #if the number of books the user has borrowed is lessthan the borrowing limit, set the duedate to 7 days after and add to the list.
+                self.borrowedBooks[book.bookId] = {
+                    'book': book,
+                    'dueDate': dueDate
+                    }
             print(f"{self.memberName} borrowed {book.title}. It is due back on {dueDate.strftime('%Y-%m-%d')}.")
         else:
             print(f"{self.memberName} has reached the borrow limit of {self.borrowLimit} books.")
